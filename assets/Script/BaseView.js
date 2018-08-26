@@ -38,7 +38,6 @@ cc.Class({
     },
 
     toucheStart(){
-        cc.log(this.m_Hero.currentClip.name);
         if(this.m_Hero.currentClip.name == 'Jump'){
             return true;
         }
@@ -55,7 +54,7 @@ cc.Class({
     // update (dt) {},
 
     onAnimationChange(target, data){
-        if(data == 'Jump'){
+        if(data == 'Jump' && this.isCanChangeClip(data)){
             var moveUp = cc.moveTo(1, -92, 40).easing(cc.easeCubicActionOut());
             var moveDown = cc.moveTo(1, -92, -50).easing(cc.easeCubicActionIn());
             var callBack = cc.callFunc(this.callBack.bind(this));
@@ -70,14 +69,33 @@ cc.Class({
     },
 
     mHeroPlay(playName){
-        this.m_Hero.play(playName);
-        if(playName == 'Roll'){
-            this.m_Hero.node.setPosition(cc.p(-92, -58));
-        }else if(playName == 'Run'){
-            this.m_Hero.node.setPosition(cc.p(-92, -50));
-        }else if(playName == 'Jump'){
-            this.m_Hero.node.setPosition(cc.p(-92, -50));
+        console.log(this.isCanChangeClip(playName));
+        if(this.isCanChangeClip(playName)){
+            if(playName == 'Roll'){
+                this.m_Hero.node.setPosition(cc.p(-92, -58));
+            }else if(playName == 'Run'){
+                this.m_Hero.node.setPosition(cc.p(-92, -50));
+            }else if(playName == 'Jump'){
+                this.m_Hero.node.setPosition(cc.p(-92, -50));
+            }
+            this.m_Hero.play(playName);
+        }
+    },
+    isCanChangeClip(playName) {
+        if (playName == 'Roll') {
+            if (this.m_Hero.currentClip.name == 'Jump') {
+                return false;
+            } else if (this.m_Hero.currentClip.name == 'Run') {
+                return true;
+            }
+        } else if (playName == 'Jump') {
+            if (this.m_Hero.currentClip.name == 'Run') {
+                return true;
+            } else {
+                return false;
+            }
         }
 
-    },
+        return true;
+    }
 });
